@@ -6,8 +6,14 @@ class CategorySer(serializers.Serializer):
     fields = '__all__'
 
 class DishSer(serializers.Serializer):
-    model = Dish
-    fields = ['title','category','image','price']
+    category = serializers.SlugRelatedField(
+        slug_field="slug",
+        read_only=True
+    )
+
+    class Meta:
+        model = Dish
+        fields = "__all__"
 
 
 class DishDetailSer(serializers.Serializer):

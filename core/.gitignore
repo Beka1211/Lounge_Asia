@@ -1,7 +1,0 @@
-.env
-.idea
-.venv
-.gitignore
-__pycache__/
-*.pyc
-media/

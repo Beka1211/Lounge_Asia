@@ -8,12 +8,21 @@ from .serializers import (
     )
 from .models import Category, Dish, Desert, Drink
 
-class Home(generics.ListAPIView):
+class MenuBaseViewSet(viewsets.ModelViewSet):
+    lookup_field = "slug"
+
+    def get_permissions(self):
+        if self.action in ("list", "retrieve"):
+            return [permissions.AllowAny()]
+        return [permissions.IsAdminUser()]
+
+
+class Home(MenuBaseViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySer
 
-class DishViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAdminUser]
+
+class DishViewSet(MenuBaseViewSet):
 
     def get_queryset(self):
         qs = Dish.objects.select_related("category")
@@ -27,11 +36,8 @@ class DishViewSet(viewsets.ModelViewSet):
             return DishDetSer
         return DishSer
 
-    lookup_field = "slug"
 
-
-class DesertViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAdminUser]
+class DesertViewSet(MenuBaseViewSet):
 
     def get_queryset(self):
         qs = Desert.objects.select_related("category")
@@ -45,11 +51,8 @@ class DesertViewSet(viewsets.ModelViewSet):
             return DesertDetSer
         return DesertSer
 
-    lookup_field = "slug"
 
-
-class DrinkViewSet(viewsets.ModelViewSet):
-    permission_classes = [permissions.IsAdminUser]
+class DrinkViewSet(MenuBaseViewSet):
 
     def get_queryset(self):
         qs = Drink.objects.select_related("category")
@@ -62,5 +65,3 @@ class DrinkViewSet(viewsets.ModelViewSet):
         if self.action == "retrieve":
             return DrinkDetSer
         return DrinkSer
-
-    lookup_field = "slug"
